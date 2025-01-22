@@ -1,0 +1,272 @@
+<!--index.html-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventory Management - Home</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+ </head>
+ <body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+  <a class="navbar-brand" href="#">Inventory Management</a>
+  <div class="collapse navbar-collapse">
+  <ul class="navbar-nav">
+   <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+   <li class="nav-item"><a class="nav-link" href="products.html">View Products</a></li>
+   <i class="nav-item"><a class="nav-link" href="add-product.html">Add Product</a></li>
+   </ul>
+   </div>
+   </div>
+  </nav>
+
+  <div class="container text-center my-5">
+  <h1>Welcome to Inventory Management</h1>
+  <p>Manage your inventory efficiently and effectively.</p>
+  <div class="d-grid gap-2 col-6 mx-auto">
+  <a href="products.html" class="btn btn-primary">View Products</a>
+  <a href="add-product.html" class="btn btn-success">Add Product</a>
+  </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
+<!--add-product.html-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Management - Add Product</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+ <a class="navbar-brand" href="#">Inventory Management</a>
+  <div class="collapse navbar-collapse">
+  <ul class="navbar-nav">
+   <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+   <li class="nav-item"><a class="nav-link" href="products.html">View Products</a></li>
+  <li class="nav-item"><a class="nav-link active" href="add-product.html">Add Product</a></li>
+ </ul>
+ </div>
+ </div>
+ </nav>
+
+    <div class="container my-5">
+    <h2 class="text-center">Add a New Product</h2>
+    <form id="product-form">
+    <div class="mb-3">
+    <label for="itemName" class="form-label">Item Name</label>
+    <input type="text" id="itemName" class="form-control" required>
+    </div>
+    <div class="mb-3">
+   <label for="itemQuantity" class="form-label">Quantity</label>
+     <input type="number" id="itemQuantity" class="form-control" required>
+   </div>
+   <div class="mb-3">
+     <label for="itemPrice" class="form-label">Price</label>
+     <input type="number" id="itemPrice" class="form-control" required>
+    </div>
+   <button type="submit" class="btn btn-success">Add Product</button>
+  </form>
+  </div>
+
+<script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
+<!--products.html-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Management - Products</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+  <a class="navbar-brand" href="#">Inventory Management</a>
+  <div class="collapse navbar-collapse">
+ <ul class="navbar-nav">
+ <li class="nav-item"><a class="nav-link active" href="products.html">View Products</a></li>
+ <li class="nav-item"><a class="nav-link" href="add-product.html">Add Product</a></li>
+ </ul>
+</div>
+</div>
+</nav>
+
+  <div class="container my-5">
+  <h2 class="text-center">All Products</h2>
+  <table class="table table-bordered">
+   <thead class="table-dark">
+     <tr>
+    <th>#</th>
+    <th>Item Name</th>
+    <th>Quantity</th>
+    <th>Price</th>
+  <th>Total Value</th>
+  <th>Actions</th>
+  </tr>
+  </thead>
+
+  <tbody id="product-table">
+      
+  </tbody>
+
+  </table>
+  </div>
+
+  <!--whatever we do editing it applies here -->
+  <div class="modal fade" id="editProductModal" tabindex="-1">
+  <div class="modal-dialog">
+  <div class="modal-content">
+  <div class="modal-header">
+  <h5 class="modal-title">Edit Product</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  </div>
+  <div class="modal-body">
+  <form id="edit-product-form">
+   <div class="mb-3">
+   <label for="editItemName" class="form-label">Item Name</label>
+   <input type="text" id="editItemName" class="form-control" required>
+    </div>
+    <div class="mb-3">
+    <label for="editItemQuantity" class="form-label">Quantity</label>
+    <input type="number" id="editItemQuantity" class="form-control" required>
+  </div>
+  <div class="mb-3">
+  <label for="editItemPrice" class="form-label">Price</label>
+  <input type="number" id="editItemPrice" class="form-control" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Save Changes</button>
+   </form>
+  </div>
+  </div>
+  </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
+<!--script.js-->
+
+
+let products = JSON.parse(localStorage.getItem('products')) || [];
+function displayProducts() {
+const productTableBody = document.getElementById('product-table');
+productTableBody.innerHTML = '';
+
+if (products.length === 0) {
+productTableBody.innerHTML = `
+<tr>
+<td colspan="6" class="text-center">No products found. Add some products first!</td>
+</tr>
+`;
+return;
+}
+
+products.forEach((product, index) => {
+const totalValue = (product.quantity * product.price).toFixed(2);
+const row = `
+<tr>
+<td>${index + 1}</td>
+<td>${product.name}</td>
+<td>${product.quantity}</td>
+<td>${product.price.toFixed(2)}</td>
+<td>${totalValue}</td>
+<td>
+<button class="btn btn-warning btn-sm edit-btn" data-index="${index}" data-bs-toggle="modal" data-bs-target="#editProductModal">Edit</button>
+<button class="btn btn-danger btn-sm delete-btn" data-index="${index}">Delete</button>
+</td>
+</tr>
+`;
+productTableBody.innerHTML += row;
+});
+
+document.querySelectorAll('.edit-btn').forEach((btn) =>
+btn.addEventListener('click', openEditModal)
+);
+
+document.querySelectorAll('.delete-btn').forEach((btn) =>
+btn.addEventListener('click', handleDelete)
+);
+}
+
+document.getElementById('product-form')?.addEventListener('submit', function (e) {
+e.preventDefault();
+
+const name = document.getElementById('itemName').value.trim();
+const quantity = parseInt(document.getElementById('itemQuantity').value);
+const price = parseFloat(document.getElementById('itemPrice').value);
+
+if (name && quantity > 0 && price > 0) {
+products.push({ name, quantity, price });
+localStorage.setItem('products', JSON.stringify(products));
+alert('Product added successfully!');
+this.reset();
+} else {
+alert('Please enter valid product details.');
+}
+});
+
+function openEditModal(event) {
+const index = event.target.dataset.index;
+const product = products[index];
+document.getElementById('editItemName').value = product.name;
+document.getElementById('editItemQuantity').value = product.quantity;
+document.getElementById('editItemPrice').value = product.price;
+document.getElementById('edit-product-form').dataset.index = index;
+}
+
+document.getElementById('edit-product-form')?.addEventListener('submit', function (e) {
+e.preventDefault();
+
+const index = this.dataset.index;
+const name = document.getElementById('editItemName').value.trim();
+const quantity = parseInt(document.getElementById('editItemQuantity').value);
+const price = parseFloat(document.getElementById('editItemPrice').value);
+
+if (name && quantity > 0 && price > 0) {
+products[index] = { name, quantity, price };
+localStorage.setItem('products', JSON.stringify(products));
+alert('Product updated successfully!');
+displayProducts();
+document.querySelector('.btn-close').click();
+} else {
+alert('Please enter valid product details.');
+}
+});
+
+function handleDelete(event) {
+const index = event.target.dataset.index;
+
+if (confirm('Are you sure you want to delete this product?')) {
+products.splice(index, 1);
+localStorage.setItem('products', JSON.stringify(products));
+displayProducts();
+}
+}
+
+if (document.getElementById('product-table')) {
+displayProducts();
+}
