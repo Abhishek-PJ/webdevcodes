@@ -96,7 +96,7 @@
             document.getElementById('lastnameError').textContent = "Last name must be at least 3 characters with starting character as letter.";
             isValid = false;
         }
-        if (!/^[A-Za-Z0-9_.-]{4,12}@[A-Za-z0-9]+\.[A-Za-z]{2,6}$/.test(email)) {
+        if (!/^[A-Za-z0-9_.-]{4,12}@[A-Za-z0-9]+\.[A-Za-z]{2,6}$/.test(email)) {
             document.getElementById('emailError').textContent = "Enter a valid email address.";
             isValid = false;
         }
@@ -108,8 +108,8 @@
             document.getElementById('genderError').textContent = "Please select a gender.";
             isValid = false;
         }
-        if (!/^[A-Za-z0-9_.-]{4,12}@[A-Za-z0-9]+\.[A-Za-z]{2,6}$/.test(email)) {
-            document.getElementById('passwordError').textContent = "Password must be at least 6 characters and contain letters and numbers.";
+        if (!/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[?/;,\.@#$%^&*+])[A-Za-z\d?/;,\.@#$%^&*+]{6,15}$/.test(password)) {
+            document.getElementById('passwordError').textContent = "Password must be 6-15 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character.";
             isValid = false;
         }
 
