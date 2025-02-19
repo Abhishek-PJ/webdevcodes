@@ -156,6 +156,60 @@ VALUES
 
 ---
 
+
+
+
+
+
+
+Entity-Relationship (ER) Diagram Structure for Tourism Management System
+
+Diagram Representation:
+
+TOURISTS [1] ---- (M) BOOKINGS (M) ---- [1] DESTINATIONS
+  |
+  | (1)
+  |
+  v
+PAYMENTS (1)
+
+Entities and Attributes:
+
+1. **TOURISTS** (Entity)
+   - tourist_id (PK)
+   - full_name
+   - email
+   - phone
+
+2. **DESTINATIONS** (Entity)
+   - destination_id (PK)
+   - name
+   - location
+   - description
+
+3. **BOOKINGS** (Entity)
+   - booking_id (PK)
+   - tourist_id (FK)
+   - destination_id (FK)
+   - check_in_date
+   - check_out_date
+
+4. **PAYMENTS** (Entity)
+   - payment_id (PK)
+   - booking_id (FK)
+   - payment_date
+   - amount
+   - payment_method
+   - transaction_id
+
+Relationships:
+
+- TOURISTS **(1)** ---- **(M)** BOOKINGS (A tourist can make multiple bookings)
+- DESTINATIONS **(1)** ---- **(M)** BOOKINGS (A destination can be booked multiple times)
+- BOOKINGS **(1)** ---- **(1)** PAYMENTS (Each booking has one payment record)
+
+
+
 ### **Summary**
 
 By adding a **Payments** table, we capture all necessary details about each transaction. This keeps the schema simple, while still supporting key tourism operations: **tourists** book **destinations**, and each **booking** can have an associated **payment** record.
