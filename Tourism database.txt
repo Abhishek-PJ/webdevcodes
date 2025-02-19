@@ -1,0 +1,161 @@
+Below is an updated **Tourism** database design that **adds a Payments table**. This keeps the schema simple while allowing each **Booking** to have a corresponding **Payment** record.
+
+---
+
+## **1. Core Tables Recap**
+
+We already have three tables:
+
+1. **Tourists** – Basic info about travelers.
+2. **Destinations** – Places available for travel.
+3. **Bookings** – Records showing which tourist booked which destination and for what dates.
+
+Now we add a fourth table:
+
+4. **Payments** – Details of payments made for each booking.
+
+---
+
+## **2. Table Structures**
+
+### **A) Tourists**
+```sql
+CREATE TABLE Tourists (
+    tourist_id INT PRIMARY KEY AUTO_INCREMENT,
+    full_name  VARCHAR(100) NOT NULL,
+    email      VARCHAR(100) NOT NULL,
+    phone      VARCHAR(20)
+);
+```
+
+### **B) Destinations**
+```sql
+CREATE TABLE Destinations (
+    destination_id INT PRIMARY KEY AUTO_INCREMENT,
+    name           VARCHAR(100) NOT NULL,
+    location       VARCHAR(255) NOT NULL,
+    description    TEXT
+);
+```
+
+### **C) Bookings**
+```sql
+CREATE TABLE Bookings (
+    booking_id     INT PRIMARY KEY AUTO_INCREMENT,
+    tourist_id     INT NOT NULL,
+    destination_id INT NOT NULL,
+    check_in_date  DATE NOT NULL,
+    check_out_date DATE NOT NULL,
+    FOREIGN KEY (tourist_id) REFERENCES Tourists(tourist_id),
+    FOREIGN KEY (destination_id) REFERENCES Destinations(destination_id)
+);
+```
+
+### **D) Payments**
+```sql
+CREATE TABLE Payments (
+    payment_id     INT PRIMARY KEY AUTO_INCREMENT,
+    booking_id     INT NOT NULL,
+    payment_date   DATE NOT NULL,
+    amount         DECIMAL(10,2) NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    transaction_id VARCHAR(50) UNIQUE,
+    FOREIGN KEY (booking_id) REFERENCES Bookings(booking_id)
+);
+```
+- **payment_id (PK)**: Unique ID for each payment.  
+- **booking_id (FK)**: References the **Bookings** table.  
+- **payment_date**: Date or timestamp of the payment.  
+- **amount**: Total amount paid for the booking.  
+- **payment_method**: Payment method (e.g., “Credit Card”, “Cash”).  
+- **transaction_id**: Unique identifier for the transaction (if any).
+
+> **Note**: For simplicity, we assume **one payment per booking**. If you need multiple partial payments per booking, treat the relationship as one-to-many instead of one-to-one.
+
+---
+
+## **3. Sample Insert Statements**
+
+Below are some quick examples to populate the database.
+
+```sql
+-- 1) Insert Tourists
+INSERT INTO Tourists (full_name, email, phone)
+VALUES
+  ('Alice Johnson', 'alice@example.com', '555-1234'),
+  ('Bob Smith', 'bob@example.com', '555-5678');
+
+-- 2) Insert Destinations
+INSERT INTO Destinations (name, location, description)
+VALUES
+  ('Grand Canyon', 'Arizona, USA', 'Famous canyon with stunning views'),
+  ('Eiffel Tower', 'Paris, France', 'Iconic tower in central Paris');
+
+-- 3) Insert Bookings
+INSERT INTO Bookings (tourist_id, destination_id, check_in_date, check_out_date)
+VALUES
+  (1, 1, '2025-03-01', '2025-03-05'),
+  (1, 2, '2025-06-10', '2025-06-12'),
+  (2, 2, '2025-07-01', '2025-07-03');
+
+-- 4) Insert Payments
+INSERT INTO Payments (booking_id, payment_date, amount, payment_method, transaction_id)
+VALUES
+  (1, '2025-02-25', 500.00, 'Credit Card', 'TXN123456'),
+  (2, '2025-06-01', 300.00, 'Debit Card', 'TXN123457'),
+  (3, '2025-06-20', 350.00, 'UPI', 'TXN123458');
+```
+
+---
+
+## **4. Example Queries**
+
+1. **List all Payments with Booking and Tourist Info**  
+   ```sql
+   SELECT p.payment_id,
+          p.amount,
+          p.payment_date,
+          p.payment_method,
+          t.full_name AS tourist,
+          d.name      AS destination
+   FROM Payments p
+   JOIN Bookings b      ON p.booking_id = b.booking_id
+   JOIN Tourists t      ON b.tourist_id = t.tourist_id
+   JOIN Destinations d  ON b.destination_id = d.destination_id;
+   ```
+
+2. **Find the Total Amount Spent by Each Tourist**  
+   ```sql
+   SELECT t.full_name,
+          SUM(p.amount) AS total_spent
+   FROM Tourists t
+   JOIN Bookings b   ON t.tourist_id = b.tourist_id
+   JOIN Payments p   ON b.booking_id = p.booking_id
+   GROUP BY t.full_name;
+   ```
+
+3. **Show Bookings That Have Not Been Paid Yet**  
+   (Assuming you only store paid bookings in `Payments`.)
+   ```sql
+   SELECT b.booking_id, t.full_name, d.name AS destination
+   FROM Bookings b
+   JOIN Tourists t     ON b.tourist_id = t.tourist_id
+   JOIN Destinations d ON b.destination_id = d.destination_id
+   LEFT JOIN Payments p ON b.booking_id = p.booking_id
+   WHERE p.booking_id IS NULL;
+   ```
+
+---
+
+## **5. Next Steps & Notes**
+
+- **Normalization**: The design is already straightforward. Consider indexes on **FK** columns (e.g., `booking_id` in Payments) to optimize performance.  
+- **One Payment per Booking**: If you need **multiple** payments per booking, remove the assumption of one-to-one. Bookings could then have multiple Payment records, and the total booking cost would be the sum of those payments.  
+- **Security**: For a real-world system, store **hashed passwords** in the `Tourists` table (and possibly rename it to `Users` if you have multiple roles).  
+- **Additional Features**: You can later add tables for **Reviews**, **Packages**, or **Invoices** to expand functionality.
+
+---
+
+### **Summary**
+
+By adding a **Payments** table, we capture all necessary details about each transaction. This keeps the schema simple, while still supporting key tourism operations: **tourists** book **destinations**, and each **booking** can have an associated **payment** record.
