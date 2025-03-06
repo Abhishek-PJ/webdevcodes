@@ -1,0 +1,52 @@
+-- Create the Employee table
+CREATE TABLE Employee (
+    SSN CHAR(9) PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    Address VARCHAR(100),
+    Salary DECIMAL(10,2),
+    Gender CHAR(1) CHECK (Gender IN ('M', 'F')),
+    Birth_Date DATE,
+    Dept_No INT,  -- Foreign key to Department
+    Supervisor_SSN CHAR(9), -- Self-referencing foreign key
+    FOREIGN KEY (Dept_No) REFERENCES Department(Dept_No) ON DELETE SET NULL,
+    FOREIGN KEY (Supervisor_SSN) REFERENCES Employee(SSN) ON DELETE SET NULL
+);
+
+-- Create the Department table
+CREATE TABLE Department (
+    Dept_No INT PRIMARY KEY,
+    Dept_Name VARCHAR(50) UNIQUE NOT NULL,
+    Managed_By CHAR(9),  -- Foreign key to Employee
+    Start_Date DATE,
+    FOREIGN KEY (Managed_By) REFERENCES Employee(SSN) ON DELETE SET NULL
+);
+
+-- Create the Project table
+CREATE TABLE Project (
+    Proj_No INT PRIMARY KEY,
+    Proj_Name VARCHAR(50) UNIQUE NOT NULL,
+    Location VARCHAR(50),
+    Controlled_By INT,  -- Foreign key to Department
+    FOREIGN KEY (Controlled_By) REFERENCES Department(Dept_No) ON DELETE CASCADE
+);
+
+-- Create the Works_On table (Many-to-Many relationship between Employee and Project)
+CREATE TABLE Works_On (
+    Employee_SSN CHAR(9),
+    Proj_No INT,
+    Hours DECIMAL(5,2),
+    PRIMARY KEY (Employee_SSN, Proj_No),
+    FOREIGN KEY (Employee_SSN) REFERENCES Employee(SSN) ON DELETE CASCADE,
+    FOREIGN KEY (Proj_No) REFERENCES Project(Proj_No) ON DELETE CASCADE
+);
+
+-- Create the Dependent table
+CREATE TABLE Dependent (
+    Employee_SSN CHAR(9),
+    Dependent_Name VARCHAR(50),
+    Gender CHAR(1) CHECK (Gender IN ('M', 'F')),
+    Birth_Date DATE,
+    Relationship VARCHAR(50),
+    PRIMARY KEY (Employee_SSN, Dependent_Name),
+    FOREIGN KEY (Employee_SSN) REFERENCES Employee(SSN) ON DELETE CASCADE
+);
