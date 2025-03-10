@@ -53,3 +53,41 @@ CREATE TABLE Works_On (
     FOREIGN KEY (Proj_No) REFERENCES Project(Proj_No) ON DELETE CASCADE
 );
 
+INSERT INTO Department (Dept_No, Dept_Name, Managed_By, Start_Date)  
+VALUES  
+(1, 'HR', NULL, '2023-01-01'),  
+(2, 'IT', NULL, '2022-05-15'),  
+(3, 'Finance', NULL, '2023-03-10');  
+
+INSERT INTO Employee (SSN, Name, Address, Salary, Gender, Birth_Date, Dept_No, Supervisor_SSN)  
+VALUES  
+('123456789', 'John Doe', '123 Elm St', 60000.00, 'M', '1990-05-15', 1, NULL),  
+('987654321', 'Jane Smith', '456 Oak St', 75000.00, 'F', '1985-10-20', 2, '123456789'),  
+('555666777', 'Alice Johnson', '789 Pine St', 68000.00, 'F', '1992-07-08', 3, '987654321');  
+
+UPDATE Department  
+SET Managed_By = '123456789'  
+WHERE Dept_No = 1;  
+
+UPDATE Department  
+SET Managed_By = '987654321'  
+WHERE Dept_No = 2;  
+
+UPDATE Department  
+SET Managed_By = '555666777'  
+WHERE Dept_No = 3;  
+
+INSERT INTO Project (Proj_No, Proj_Name, Location, Controlled_By)  
+VALUES  
+(101, 'AI Research', 'New York', 1),  
+(102, 'Web Development', 'San Francisco', 2),  
+(103, 'Financial Analysis', 'Chicago', 3);  
+
+
+INSERT INTO Dependent (Employee_SSN, Dependent_Name, Gender, Birth_Date, Relationship)  
+VALUES  
+('123456789', 'Michael Doe', 'M', '2015-06-20', 'Son'),  
+('987654321', 'Emily Smith', 'F', '2010-11-05', 'Daughter'),  
+('555666777', 'Sophia Johnson', 'F', '2018-09-15', 'Daughter');  
+
+
