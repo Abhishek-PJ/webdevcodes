@@ -90,4 +90,11 @@ VALUES
 ('987654321', 'Emily Smith', 'F', '2010-11-05', 'Daughter'),  
 ('555666777', 'Sophia Johnson', 'F', '2018-09-15', 'Daughter');  
 
+INSERT INTO Works_On (Employee_SSN, Proj_No, Hours)  
+VALUES  
+('123456789', 101, 25.5),  -- John Doe works on AI Research for 25.5 hours  
+('987654321', 102, 30.0),  -- Jane Smith works on Web Development for 30 hours  
+('555666777', 103, 20.0),  -- Alice Johnson works on Financial Analysis for 20 hours  
+('123456789', 102, 15.0),  -- John Doe also works on Web Development for 15 hours  
+('987654321', 103, 10.5);  -- Jane Smith also works on Financial Analysis for 10.5 hours  
 
