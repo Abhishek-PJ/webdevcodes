@@ -1,100 +1,223 @@
-CREATE TABLE Department (
-    Dept_No INT PRIMARY KEY,
-    Dept_Name VARCHAR(50) UNIQUE NOT NULL,
-    Managed_By CHAR(9),  -- This will reference Employee
-    Start_Date DATE
+create database company ;
+use company;
+
+CREATE TABLE DEPARTMENT (
+    dept_number INT PRIMARY KEY,
+    dept_name VARCHAR(255) UNIQUE,
+    manager_ssn INT,
+    start_date DATE
     
-);
-
-
-CREATE TABLE Employee (
-    SSN CHAR(9) PRIMARY KEY,  -- Unique Social Security Number
-    Name VARCHAR(50) NOT NULL,
-    Address VARCHAR(100),
-    Salary DECIMAL(10,2) CHECK (Salary >= 0),  -- Ensures salary is non-negative
-    Gender CHAR(1) CHECK (Gender IN ('M', 'F')),  -- Restricts gender values
-    Birth_Date DATE,
-    Dept_No INT,  -- Foreign key to Department
-    Supervisor_SSN CHAR(9), -- Self-referencing foreign key
-
-    FOREIGN KEY (Dept_No) REFERENCES Department(Dept_No) ON DELETE SET NULL,
-    FOREIGN KEY (Supervisor_SSN) REFERENCES Employee(SSN) ON DELETE SET NULL
-);
-
-ALTER TABLE Department
-ADD FOREIGN KEY (Managed_By) REFERENCES Employee(SSN) ON DELETE SET NULL;
-
-CREATE TABLE Project (
-    Proj_No INT PRIMARY KEY,
-    Proj_Name VARCHAR(50) UNIQUE NOT NULL,
-    Location VARCHAR(50),
-    Controlled_By INT,  -- Foreign key to Department
+    );
     
-    FOREIGN KEY (Controlled_By) REFERENCES Department(Dept_No) ON DELETE CASCADE
+    CREATE TABLE EMPLOYEE (
+    emp_id INT PRIMARY KEY,
+    ssn VARCHAR(11) UNIQUE,
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    address VARCHAR(255),
+    salary DECIMAL(10, 2),
+    gender CHAR(1),
+    birthdate DATE,
+    dept_number INT,
+    supervisor_id INT,
+    total_projects_value DECIMAL(15, 2) DEFAULT 0,
+    FOREIGN KEY (dept_number) REFERENCES DEPARTMENT(dept_number),
+    FOREIGN KEY (supervisor_id) REFERENCES EMPLOYEE(emp_id)
+);
+ALTER TABLE DEPARTMENT ADD FOREIGN KEY (manager_ssn) REFERENCES EMPLOYEE(emp_id);
+
+ CREATE TABLE PROJECT (
+    proj_number VARCHAR(255) PRIMARY KEY,
+    proj_name VARCHAR(255) UNIQUE,
+    location VARCHAR(255),
+    dept_number INT,
+    status VARCHAR(50),
+    FOREIGN KEY (dept_number) REFERENCES DEPARTMENT(dept_number)
 );
 
-CREATE TABLE Dependent (
-    Employee_SSN CHAR(9),
-    Dependent_Name VARCHAR(50),
-    Gender CHAR(1) CHECK (Gender IN ('M', 'F')),
-    Birth_Date DATE,
-    Relationship VARCHAR(50),
-
-    PRIMARY KEY (Employee_SSN, Dependent_Name),
-    FOREIGN KEY (Employee_SSN) REFERENCES Employee(SSN) ON DELETE CASCADE
+CREATE TABLE DEPENDENT (
+    emp_id INT,
+    sex CHAR(1),
+    birthdate DATE,
+    relationship VARCHAR(255),
+    PRIMARY KEY (emp_id),
+    FOREIGN KEY (emp_id) REFERENCES EMPLOYEE(emp_id)
 );
 
-CREATE TABLE Works_On (
-    Employee_SSN CHAR(9),
-    Proj_No INT,
-    Hours DECIMAL(5,2), -- Number of hours the employee worked on the project
-    PRIMARY KEY (Employee_SSN, Proj_No),
-    FOREIGN KEY (Employee_SSN) REFERENCES Employee(SSN) ON DELETE CASCADE,
-    FOREIGN KEY (Proj_No) REFERENCES Project(Proj_No) ON DELETE CASCADE
+CREATE TABLE WORKS_ON (
+    emp_id INT,
+    proj_number VARCHAR(255),
+    hours_per_week DECIMAL(5, 2),
+    PRIMARY KEY (emp_id,proj_number),
+    FOREIGN KEY (emp_id) REFERENCES EMPLOYEE(emp_id),
+    FOREIGN KEY (proj_number) REFERENCES PROJECT(proj_number)
 );
 
-INSERT INTO Department (Dept_No, Dept_Name, Managed_By, Start_Date)  
-VALUES  
-(1, 'HR', NULL, '2023-01-01'),  
-(2, 'IT', NULL, '2022-05-15'),  
-(3, 'Finance', NULL, '2023-03-10');  
+CREATE TABLE DEPARTMENT_LOCATIONS (
+    dept_number INT,
+    location VARCHAR(255),
+    PRIMARY KEY (dept_number, location),
+    FOREIGN KEY (dept_number) REFERENCES DEPARTMENT(dept_number)
+);
 
-INSERT INTO Employee (SSN, Name, Address, Salary, Gender, Birth_Date, Dept_No, Supervisor_SSN)  
-VALUES  
-('123456789', 'John Doe', '123 Elm St', 60000.00, 'M', '1990-05-15', 1, NULL),  
-('987654321', 'Jane Smith', '456 Oak St', 75000.00, 'F', '1985-10-20', 2, '123456789'),  
-('555666777', 'Alice Johnson', '789 Pine St', 68000.00, 'F', '1992-07-08', 3, '987654321');  
-
-UPDATE Department  
-SET Managed_By = '123456789'  
-WHERE Dept_No = 1;  
-
-UPDATE Department  
-SET Managed_By = '987654321'  
-WHERE Dept_No = 2;  
-
-UPDATE Department  
-SET Managed_By = '555666777'  
-WHERE Dept_No = 3;  
-
-INSERT INTO Project (Proj_No, Proj_Name, Location, Controlled_By)  
-VALUES  
-(101, 'AI Research', 'New York', 1),  
-(102, 'Web Development', 'San Francisco', 2),  
-(103, 'Financial Analysis', 'Chicago', 3);  
+CREATE TABLE PROJECT_LOCATIONS (
+    proj_number varchar(255),
+    location VARCHAR(255),
+    PRIMARY KEY (proj_number, location),
+    FOREIGN KEY (proj_number) REFERENCES PROJECT(proj_number)
+);
 
 
-INSERT INTO Dependent (Employee_SSN, Dependent_Name, Gender, Birth_Date, Relationship)  
-VALUES  
-('123456789', 'Michael Doe', 'M', '2015-06-20', 'Son'),  
-('987654321', 'Emily Smith', 'F', '2010-11-05', 'Daughter'),  
-('555666777', 'Sophia Johnson', 'F', '2018-09-15', 'Daughter');  
 
-INSERT INTO Works_On (Employee_SSN, Proj_No, Hours)  
-VALUES  
-('123456789', 101, 25.5),  -- John Doe works on AI Research for 25.5 hours  
-('987654321', 102, 30.0),  -- Jane Smith works on Web Development for 30 hours  
-('555666777', 103, 20.0),  -- Alice Johnson works on Financial Analysis for 20 hours  
-('123456789', 102, 15.0),  -- John Doe also works on Web Development for 15 hours  
-('987654321', 103, 10.5);  -- Jane Smith also works on Financial Analysis for 10.5 hours  
+INSERT INTO EMPLOYEE (emp_id, ssn, first_name, last_name, address, salary, gender, birthdate, dept_number, supervisor_id, total_projects_value)
+VALUES
+(101, '123-45-6789', 'Amit', 'Sharma', '123 MG Road, Bengaluru', 75000.00, 'M', '1985-05-10', 1, NULL, 1500000),
+(102, '987-65-4321', 'Priya', 'Iyer', '456 Brigade Road, Chennai', 80000.00, 'F', '1980-12-25', 2, 101, 1000000),
+(103, '456-78-9123', 'Neha', 'Rao', '789 JP Nagar, Hyderabad', 90000.00, 'F', '1975-08-15', 3, 101, 500000),
+(104, '111-22-3333', 'Rahul', 'Verma', '321 Koramangala, Bengaluru', 85000.00, 'M', '1990-07-20', 1, 101, 0),
+(105, '222-33-4444', 'Arjun', 'Dutta', '654 Park Street, Kolkata', 70000.00, 'M', '1988-03-15', 2, 102, 0);
+
+INSERT INTO EMPLOYEE (emp_id, ssn, first_name, last_name, address, salary, gender, birthdate, dept_number, supervisor_id, total_projects_value)
+VALUES
+(106, '333-44-5555', 'Vikram', 'Singh', '987 Hinjewadi, Pune', 72000.00, 'M', '1992-09-10', 1, 101, 0),
+(107, '444-55-6666', 'Pooja', 'Mehta', '654 Banjara Hills, Hyderabad', 78000.00, 'F', '1991-04-25', 1, 101, 0),
+(108, '555-66-7777', 'Sanjay', 'Kapoor', '321 MG Road, Delhi', 76000.00, 'M', '1993-11-30', 1, 101, 0);
+
+INSERT INTO DEPARTMENT (dept_number, dept_name, manager_ssn, start_date)
+VALUES
+(1, 'Finance', 101, '2020-01-01'),
+(2, 'R&D', 102, '2019-05-15'),
+(3, 'HR', 103, '2021-03-10');
+
+INSERT INTO PROJECT (proj_number, proj_name, location, dept_number, status)
+VALUES
+('P001', 'Project A', 'Bengaluru', 1, 'ongoing'),
+('P002', 'Project B', 'Mumbai', 2, 'completed'),
+('P003', 'Project C', 'Hyderabad', 3, 'ongoing'),
+('P004', 'Project D', 'Pune', 2, 'ongoing'),
+('P005', 'Project E', 'Chennai', 2, 'ongoing'),
+('P006', 'Project F', 'Delhi', 2, 'ongoing');
+
+INSERT INTO DEPENDENT (emp_id, sex, birthdate, relationship)
+VALUES
+(101, 'F', '2010-06-15', 'Daughter'),
+(102, 'M', '2012-03-20', 'Son'),
+(103, 'M', '2015-07-10', 'Son');
+
+INSERT INTO WORKS_ON (emp_id, proj_number, hours_per_week)
+VALUES
+(101, 'P001', 20.0),
+(102, 'P002', 30.0),
+(102, 'P004', 20.0),
+(102, 'P005', 25.0),
+(102, 'P006', 30.0),
+(103, 'P003', 25.0),
+(104, 'P001', 15.0),
+(105, 'P004', 10.0);
+
+INSERT INTO DEPARTMENT_LOCATIONS (dept_number, location)
+VALUES
+(1, 'Bengaluru'),
+(1, 'Hyderabad'),
+(2, 'Mumbai'),
+(3, 'Chennai');
+
+INSERT INTO PROJECT_LOCATIONS (proj_number, location)
+VALUES
+('P001', 'Bengaluru'),
+('P001', 'Hyderabad'),
+('P002', 'Mumbai'),
+('P003', 'Hyderabad'),
+('P004', 'Pune'),
+('P005', 'Chennai'),
+('P006', 'Delhi');
+
+INSERT INTO COMPLETED_PROJECTS (emp_id, proj_number, completion_date, project_value)
+VALUES
+(102, 'P002', '2023-01-15', 1000000),
+(103, 'P003', '2023-02-20', 500000);
+
+INSERT INTO COMPLETED_PROJECTS (emp_id, proj_number, completion_date, project_value)
+VALUES
+(106, 'P001', '2023-03-10', 200000),
+(107, 'P001', '2023-03-15', 300000),
+(108, 'P001', '2023-03-20', 250000);
+
+
+
+
+-- a) List the first name, last name, and department name of the employee
+-- who draws a salary greater than the average salary of employees working for the Finance department.
+
+SELECT e.first_name, e.last_name, d.dept_name, e.salary
+FROM EMPLOYEE e
+JOIN DEPARTMENT d ON e.dept_number = d.dept_number
+WHERE e.salary > (
+    SELECT AVG(salary)
+    FROM EMPLOYEE
+    WHERE dept_number = (
+        SELECT dept_number
+        FROM DEPARTMENT
+        WHERE dept_name = 'Finance'
+    )
+);
+
+-- b) List the name and department of the employee 
+-- who is currently working on more than two projects controlled by the R&D department.
+
+SELECT e.first_name, e.last_name, d.dept_name
+FROM EMPLOYEE e
+JOIN DEPARTMENT d ON e.dept_number = d.dept_number
+JOIN WORKS_ON w ON e.emp_id = w.emp_id
+JOIN PROJECT p ON w.proj_number = p.proj_number
+WHERE p.dept_number = (
+    SELECT dept_number
+    FROM DEPARTMENT
+    WHERE dept_name = 'R&D'
+)
+GROUP BY e.emp_id
+HAVING COUNT(w.proj_number) > 2;
+
+-- c) List all the ongoing projects controlled by all the departments.
+
+SELECT p.proj_name, d.dept_name
+FROM PROJECT p
+JOIN DEPARTMENT d ON p.dept_number = d.dept_number
+WHERE p.status = 'ongoing';
+
+-- d) Give the details of the supervisor who is supervising more than 3 employees who have completed at least one project.
+SELECT s.*
+FROM EMPLOYEE s
+WHERE s.emp_id IN (
+    SELECT supervisor_id
+    FROM EMPLOYEE e
+    WHERE e.emp_id IN (
+        SELECT emp_id
+        FROM COMPLETED_PROJECTS
+        GROUP BY emp_id
+        HAVING COUNT(proj_number) >= 1
+    )
+    GROUP BY supervisor_id
+    HAVING COUNT(e.emp_id) > 3
+);
+
+-- e) List the name of the dependent's employee who has completed a total projects worth 10L (1,000,000).
+SELECT e.first_name, e.last_name
+FROM EMPLOYEE e
+JOIN DEPENDENT dep ON e.emp_id = dep.emp_id
+WHERE e.emp_id IN (
+    SELECT emp_id
+    FROM COMPLETED_PROJECTS
+    GROUP BY emp_id
+    HAVING SUM(project_value) >= 1000000
+);
+
+-- f) List the department and employee details whose project is in more than one city.
+SELECT d.dept_name, e.*
+FROM DEPARTMENT d
+JOIN EMPLOYEE e ON d.dept_number = e.dept_number
+JOIN PROJECT p ON d.dept_number = p.dept_number
+JOIN PROJECT_LOCATIONS pl ON p.proj_number = pl.proj_number
+GROUP BY d.dept_number, e.emp_id
+HAVING COUNT(DISTINCT pl.location) > 1;
 
