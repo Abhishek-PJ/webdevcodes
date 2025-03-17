@@ -1,0 +1,124 @@
+create database solar_panel ;
+
+use solar_panel;
+
+CREATE TABLE PANEL_TYPE (
+  panel_type_id        INT PRIMARY KEY,
+  panel_name           VARCHAR(50) NOT NULL,
+  installation_charges DECIMAL(10,2) NOT NULL,
+  warranty_years       INT NOT NULL
+);
+
+CREATE TABLE DISTRIBUTOR (
+  tin                 VARCHAR(20) PRIMARY KEY,
+  distributor_name    VARCHAR(100),
+  address             VARCHAR(255),
+  contact_details     VARCHAR(50)
+);
+
+CREATE TABLE PLACE (
+  place_id   INT PRIMARY KEY,
+  address    VARCHAR(255),
+  usage_type VARCHAR(50),
+  capacity   INT
+);
+
+CREATE TABLE INSTALLATION (
+  installation_id   INT PRIMARY KEY,
+  installation_date DATE,
+  panel_type_id     INT NOT NULL,
+  tin               VARCHAR(20) NOT NULL,
+  place_id          INT NOT NULL,
+  FOREIGN KEY (panel_type_id) REFERENCES PANEL_TYPE(panel_type_id),
+  FOREIGN KEY (tin)           REFERENCES DISTRIBUTOR(tin),
+  FOREIGN KEY (place_id)      REFERENCES PLACE(place_id)
+);
+
+
+
+-- 1. Insert Panel Types
+INSERT INTO PANEL_TYPE (panel_type_id, panel_name, installation_charges, warranty_years)
+VALUES 
+  (1, 'Monocrystalline', 40000, 15),
+  (2, 'Polycrystalline', 60000, 25);
+
+-- 2. Insert Distributors
+INSERT INTO DISTRIBUTOR (tin, distributor_name, address, contact_details)
+VALUES
+  ('TIN001', 'Green Solar Solutions', 'Mumbai', '9876543210'),
+  ('TIN002', 'Sun Energy Distributors', 'Delhi', '1234567890');
+
+-- 3. Insert Places (Domestic & Commercial)
+INSERT INTO PLACE (place_id, address, usage_type, capacity)
+VALUES
+  (1, '1234 Green St, Mumbai', 'domestic',   5),
+  (2, '12 Corporate Ave, Mumbai', 'commercial', 10),
+  (3, '999 Industrial Rd, Delhi', 'commercial', 20),
+  (4, '50 Residential Ln, Delhi', 'domestic',   8);
+
+-- 4. Insert Installations
+-- (installation_id, installation_date, panel_type_id, tin, place_id)
+INSERT INTO INSTALLATION VALUES 
+  (1, '2010-01-01', 1, 'TIN001', 1),  -- Oldest installation, domestic
+  (2, '2020-01-01', 2, 'TIN001', 1),  -- Another domestic for same place
+  (3, '2021-06-15', 1, 'TIN002', 2),  -- Commercial place, monocrystalline
+  (4, '2022-08-10', 2, 'TIN001', 3),  -- Commercial place, polycrystalline
+  (5, '2023-05-05', 1, 'TIN002', 4);  -- Another domestic place
+
+SELECT DISTINCT p.address AS monocrystalline_installed_at
+FROM INSTALLATION i
+JOIN PANEL_TYPE pt ON i.panel_type_id = pt.panel_type_id
+JOIN PLACE p      ON i.place_id       = p.place_id
+WHERE pt.panel_name = 'Monocrystalline';
+
+SELECT 
+    i.tin AS distributor_tin,
+    d.distributor_name,
+    COUNT(*) AS total_domestic_installations
+FROM INSTALLATION i
+JOIN PLACE p      ON i.place_id = p.place_id
+JOIN DISTRIBUTOR d ON i.tin     = d.tin
+WHERE p.usage_type = 'domestic'
+GROUP BY i.tin, d.distributor_name
+ORDER BY total_domestic_installations DESC
+LIMIT 1;
+
+SELECT p.place_id, p.address, p.capacity
+FROM PLACE p
+JOIN INSTALLATION i ON p.place_id = i.place_id
+ORDER BY p.capacity DESC
+LIMIT 1;
+
+SELECT 
+    p.address,
+    pt.panel_name,
+    SUM(pt.installation_charges) AS total_charges
+FROM INSTALLATION i
+JOIN PANEL_TYPE pt ON i.panel_type_id = pt.panel_type_id
+JOIN PLACE p      ON i.place_id       = p.place_id
+WHERE p.address LIKE '%Mumbai%'
+GROUP BY p.address, pt.panel_name;
+
+SELECT 
+    i.installation_date,
+    d.distributor_name,
+    d.tin,
+    pt.panel_name,
+    pt.warranty_years
+FROM INSTALLATION i
+JOIN DISTRIBUTOR d ON i.tin           = d.tin
+JOIN PANEL_TYPE pt ON i.panel_type_id = pt.panel_type_id
+ORDER BY i.installation_date ASC
+LIMIT 1;
+
+SELECT 
+    pt.panel_name,
+    AVG(pt.installation_charges) AS avg_sales_in_commercial
+FROM INSTALLATION i
+JOIN PANEL_TYPE pt ON i.panel_type_id = pt.panel_type_id
+JOIN PLACE p      ON i.place_id       = p.place_id
+WHERE p.usage_type = 'commercial'
+GROUP BY pt.panel_name;
+
+select *from distributor;
+select *from installation;
